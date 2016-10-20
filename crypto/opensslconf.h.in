@@ -25,6 +25,8 @@
 #endif
 #endif
 
+#undef SYSTEM_CIPHERS_FILE
+
 #undef OPENSSL_UNISTD
 #define OPENSSL_UNISTD <unistd.h>
 

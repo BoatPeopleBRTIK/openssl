@@ -282,7 +282,7 @@ int SSL_CTX_set_ssl_version(SSL_CTX *ctx, const SSL_METHOD *meth)
                                 &(ctx->cipher_list_by_id),
                                 meth->version ==
                                 SSL2_VERSION ? "SSLv2" :
-                                SSL_DEFAULT_CIPHER_LIST, ctx->cert);
+                                SSL_SYSTEM_DEFAULT_CIPHER_LIST, ctx->cert);
     if ((sk == NULL) || (sk_SSL_CIPHER_num(sk) <= 0)) {
         SSLerr(SSL_F_SSL_CTX_SET_SSL_VERSION,
                SSL_R_SSL_LIBRARY_HAS_NO_CIPHERS);
@@ -1960,7 +1960,7 @@ SSL_CTX *SSL_CTX_new(const SSL_METHOD *meth)
     ssl_create_cipher_list(ret->method,
                            &ret->cipher_list, &ret->cipher_list_by_id,
                            meth->version ==
-                           SSL2_VERSION ? "SSLv2" : SSL_DEFAULT_CIPHER_LIST,
+                           SSL2_VERSION ? "SSLv2" : SSL_SYSTEM_DEFAULT_CIPHER_LIST,
                            ret->cert);
     if (ret->cipher_list == NULL || sk_SSL_CIPHER_num(ret->cipher_list) <= 0) {
         SSLerr(SSL_F_SSL_CTX_NEW, SSL_R_LIBRARY_HAS_NO_CIPHERS);

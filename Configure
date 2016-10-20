@@ -10,7 +10,7 @@ use strict;
 
 # see INSTALL for instructions.
 
-my $usage="Usage: Configure [no-<cipher> ...] [enable-<cipher> ...] [experimental-<cipher> ...] [-Dxxx] [-lxxx] [-Lxxx] [-fxxx] [-Kxxx] [no-hw-xxx|no-hw] [[no-]threads] [[no-]shared] [[no-]zlib|zlib-dynamic] [no-asm] [no-dso] [no-krb5] [sctp] [386] [--prefix=DIR] [--openssldir=OPENSSLDIR] [--with-xxx[=vvv]] [--test-sanity] os/compiler[:flags]\n";
+my $usage="Usage: Configure [no-<cipher> ...] [enable-<cipher> ...] [experimental-<cipher> ...] [-Dxxx] [-lxxx] [-Lxxx] [-fxxx] [-Kxxx] [no-hw-xxx|no-hw] [[no-]threads] [[no-]shared] [[no-]zlib|zlib-dynamic] [no-asm] [no-dso] [no-krb5] [sctp] [386] [--prefix=DIR] [--openssldir=OPENSSLDIR] [--system-ciphers-file=SYSTEMCIPHERFILE] [--with-xxx[=vvv]] [--test-sanity] os/compiler[:flags]\n";
 
 # Options:
 #
@@ -34,6 +34,9 @@ my $usage="Usage: Configure [no-<cipher> ...] [enable-<cipher> ...] [experimenta
 #		(Default: KRB5_DIR/include)
 # --with-krb5-flavor  Declare what flavor of Kerberos 5 is used.  Currently
 #		supported values are "MIT" and "Heimdal".  A value is required.
+#
+# --system-ciphers-file  A file to read cipher string from when the PROFILE=SYSTEM
+#		cipher is specified (default).
 #
 # --test-sanity Make a number of sanity checks on the data in this file.
 #               This is a debugging tool for OpenSSL developers.
@@ -728,6 +731,7 @@ my $prefix="";
 my $libdir="";
 my $openssldir="";
 my $enginesdir="";
+my $system_ciphers_file="";
 my $exe_ext="";
 my $install_prefix= "$ENV{'INSTALL_PREFIX'}";
 my $cross_compile_prefix="";
@@ -961,6 +965,10 @@ PROCESS_ARGS:
 				{
 				$enginesdir=$1;
 				}
+			elsif (/^--system-ciphers-file=(.*)$/)
+				{
+				$system_ciphers_file=$1;
+				}
 			elsif (/^--install.prefix=(.*)$/)
 				{
 				$install_prefix=$1;
@@ -1118,6 +1126,7 @@ print "Configuring for $target\n";
 
 &usage if (!defined($table{$target}));
 
+chop $system_ciphers_file if $system_ciphers_file =~ /\/$/;
 
 foreach (sort (keys %disabled))
 	{
@@ -1709,6 +1718,7 @@ while (<IN>)
 	s/^MULTILIB=.*$/MULTILIB=$multilib/;
 	s/^OPENSSLDIR=.*$/OPENSSLDIR=$openssldir/;
 	s/^ENGINESDIR=.*$/ENGINESDIR=$enginesdir/;
+	s/^SYSTEM_CIPHERS_FILE=.*$/SYSTEM_CIPHERS_FILE=$system_ciphers_file/;
 	s/^LIBDIR=.*$/LIBDIR=$libdir/;
 	s/^INSTALL_PREFIX=.*$/INSTALL_PREFIX=$install_prefix/;
 	s/^PLATFORM=.*$/PLATFORM=$target/;
@@ -1921,6 +1931,14 @@ while (<IN>)
 		my $foo = "$enginesdir";
 		$foo =~ s/\\/\\\\/g;
 		print OUT "#define ENGINESDIR \"$foo\"\n";
+		}
+	elsif	(/^#((define)|(undef))\s+SYSTEM_CIPHERS_FILE/)
+		{
+		my $foo = "$system_ciphers_file";
+		if ($foo ne '') {
+			$foo =~ s/\\/\\\\/g;
+			print OUT "#define SYSTEM_CIPHERS_FILE \"$foo\"\n";
+		}
 		}
 	elsif	(/^#((define)|(undef))\s+OPENSSL_EXPORT_VAR_AS_FUNCTION/)
 		{ printf OUT "#undef OPENSSL_EXPORT_VAR_AS_FUNCTION\n"
