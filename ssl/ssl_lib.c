@@ -2064,11 +2064,11 @@ SSL_CTX *SSL_CTX_new(const SSL_METHOD *meth)
     ret->options |= SSL_OP_LEGACY_SERVER_CONNECT;
 
     /*
-     * Disable SSLv2 by default, callers that want to enable SSLv2 will have to
-     * explicitly clear this option via either of SSL_CTX_clear_options() or
+     * Disable SSLv2 and SSLv3 by default, callers that want to enable these will have to
+     * explicitly clear these options via either of SSL_CTX_clear_options() or
      * SSL_clear_options().
      */
-    ret->options |= SSL_OP_NO_SSLv2;
+    ret->options |= SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3;
 
     return (ret);
  err:
