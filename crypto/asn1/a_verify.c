@@ -56,6 +56,9 @@
  * [including the GNU Public Licence.]
  */
 
+/* for secure_getenv */
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <time.h>
 
@@ -174,6 +177,11 @@ int ASN1_item_verify(const ASN1_ITEM *it, X509_ALGOR *a,
         if (ret != 2)
             goto err;
         ret = -1;
+    } else if (mdnid == NID_md5
+               && secure_getenv("OPENSSL_ENABLE_MD5_VERIFY") == NULL) {
+        ASN1err(ASN1_F_ASN1_ITEM_VERIFY,
+                ASN1_R_UNKNOWN_MESSAGE_DIGEST_ALGORITHM);
+        goto err;
     } else {
         const EVP_MD *type;
         type = EVP_get_digestbynid(mdnid);
