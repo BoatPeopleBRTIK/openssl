@@ -424,14 +424,10 @@ int FIPS_module_mode_set(int onoff, const char *auth)
                 ret = 0;
                 goto end;
             }
+            OPENSSL_ia32cap_P[0] |= (1 << 28); /* set "shared cache"   */
+            OPENSSL_ia32cap_P[1] &= ~(1 << (60 - 32)); /* clear AVX            */
         }
 # endif
-
-        if (!FIPS_selftest()) {
-            fips_selftest_fail = 1;
-            ret = 0;
-            goto end;
-        }
 
         if (!verify_checksums()) {
             FIPSerr(FIPS_F_FIPS_MODULE_MODE_SET,
@@ -441,7 +437,13 @@ int FIPS_module_mode_set(int onoff, const char *auth)
             goto end;
         }
 
-        fips_set_mode(onoff);
+        if (FIPS_selftest())
+            fips_set_mode(onoff);
+        else {
+            fips_selftest_fail = 1;
+            ret = 0;
+            goto end;
+        }
         ret = 1;
         goto end;
     }

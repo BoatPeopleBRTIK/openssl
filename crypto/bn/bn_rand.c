@@ -141,11 +141,8 @@ static int bnrand(int pseudorand, BIGNUM *rnd, int bits, int top, int bottom)
     }
 
     /* make a random number and set the top and bottom bits */
-    if (!FIPS_mode()) {         
-        /* in FIPS mode the RNG is always properly seeded or the module fails */
-        time(&tim);
-        RAND_add(&tim, sizeof(tim), 0.0);
-    }
+    time(&tim);
+    RAND_add(&tim, sizeof(tim), 0.0);
 
     /* We ignore the value of pseudorand and always call RAND_bytes */
     if (RAND_bytes(buf, bytes) <= 0)
