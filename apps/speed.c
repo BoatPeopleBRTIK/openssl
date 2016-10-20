@@ -648,10 +648,6 @@ int MAIN(int argc, char **argv)
 # endif
     int multiblock = 0;
 
-# ifndef TIMES
-    usertime = -1;
-# endif
-
     apps_startup();
     memset(results, 0, sizeof(results));
 # ifndef OPENSSL_NO_DSA
@@ -1207,10 +1203,8 @@ int MAIN(int argc, char **argv)
 
             BIO_printf(bio_err, "\n");
             BIO_printf(bio_err, "Available options:\n");
-# if defined(TIMES) || defined(USE_TOD)
             BIO_printf(bio_err, "-elapsed        "
                        "measure time in real time instead of CPU user time.\n");
-# endif
 # ifndef OPENSSL_NO_ENGINE
             BIO_printf(bio_err,
                        "-engine e       "
