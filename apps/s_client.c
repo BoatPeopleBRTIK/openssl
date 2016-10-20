@@ -134,7 +134,8 @@
  * OTHER ENTITY BASED ON INFRINGEMENT OF INTELLECTUAL PROPERTY RIGHTS OR
  * OTHERWISE.
  */
-
+/* for strcasestr */
+#define _GNU_SOURCE
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -1660,8 +1661,11 @@ int MAIN(int argc, char **argv)
                    "xmlns='jabber:client' to='%s' version='1.0'>", host);
         seen = BIO_read(sbio, mbuf, BUFSIZZ);
         mbuf[seen] = 0;
-        while (!strstr
-               (mbuf, "<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'")) {
+        while (!strcasestr
+               (mbuf, "<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'")
+               && !strcasestr(mbuf,
+                              "<starttls xmlns=\"urn:ietf:params:xml:ns:xmpp-tls\""))
+        {
             if (strstr(mbuf, "/stream:features>"))
                 goto shut;
             seen = BIO_read(sbio, mbuf, BUFSIZZ);
