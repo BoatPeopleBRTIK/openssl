@@ -391,10 +391,7 @@ int ssleay_rand_bytes(unsigned char *buf, int num, int pseudo, int lock)
     CRYPTO_w_unlock(CRYPTO_LOCK_RAND2);
     crypto_lock_rand = 1;
 
-    /* always poll for external entropy in FIPS mode, drbg provides the 
-     * expansion
-     */
-    if (!initialized || FIPS_module_mode()) {
+    if (!initialized) {
         RAND_poll();
         initialized = 1;
     }
