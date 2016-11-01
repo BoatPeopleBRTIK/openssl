@@ -31,7 +31,6 @@ Epoch: 1
 Source2: Makefile.certificate
 Source6: make-dummy-cert
 Source7: renew-dummy-cert
-Source8: openssl-thread-test.c
 Source9: opensslconf-new.h
 Source10: opensslconf-new-warning.h
 Source: openssl-%{version}.tar.xz
